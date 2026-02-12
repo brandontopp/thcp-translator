@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THCP Amount Translator</title>
+<style>
+body {
+margin: 0;
+padding: 0;
+font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.thcp-calc {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.thcp-calc-card {
+  background: #1B3A2F;
+  border-radius: 12px;
+  padding: 28px 24px;
+  color: #fff;
+  text-align: center;
+}
+
+.thcp-calc-title {
+  font-size: 1.2em;
+  font-weight: 700;
+  margin: 0 0 6px;
+  letter-spacing: -0.01em;
+}
+
+.thcp-calc-subtitle {
+  font-size: 0.85em;
+  color: rgba(255,255,255,0.65);
+  margin: 0 0 22px;
+  font-weight: 400;
+}
+
+.thcp-calc-label {
+  font-size: 0.78em;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(255,255,255,0.5);
+  margin: 0 0 10px;
+  font-weight: 600;
+}
+
+.thcp-calc-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.thcp-calc-btn {
+  background: rgba(255,255,255,0.1);
+  border: 1.5px solid rgba(255,255,255,0.2);
+  border-radius: 12px;
+  color: #fff;
+  font-size: 0.95em;
+  font-weight: 600;
+  padding: 10px 18px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  min-width: 64px;
+}
+
+.thcp-calc-btn:hover {
+  background: rgba(255,255,255,0.18);
+  border-color: rgba(255,255,255,0.4);
+}
+
+.thcp-calc-btn.active {
+  background: #fff;
+  color: #1B3A2F;
+  border-color: #fff;
+}
+
+.thcp-calc-result {
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: all 0.35s ease;
+}
+
+.thcp-calc-result.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.thcp-calc-result-number {
+  font-size: 2.8em;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin-bottom: 2px;
+}
+
+.thcp-calc-result-unit {
+  font-size: 0.85em;
+  color: rgba(255,255,255,0.6);
+  font-weight: 400;
+  margin-bottom: 14px;
+}
+
+.thcp-calc-result-note {
+  font-size: 0.8em;
+  color: rgba(255,255,255,0.5);
+  max-width: 320px;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.thcp-calc-prompt {
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.thcp-calc-prompt p {
+  font-size: 0.9em;
+  color: rgba(255,255,255,0.35);
+  margin: 0;
+  font-style: italic;
+}
+
+.thcp-calc-bar-wrap {
+  background: rgba(255,255,255,0.1);
+  border-radius: 8px;
+  height: 6px;
+  width: 100%;
+  max-width: 280px;
+  margin: 16px auto 8px;
+  overflow: hidden;
+}
+
+.thcp-calc-bar {
+  height: 100%;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #a8d5a2, #f4c7c3);
+  width: 0%;
+  transition: width 0.5s ease;
+}
+
+.thcp-calc-bar-labels {
+  display: flex;
+  justify-content: space-between;
+  max-width: 280px;
+  margin: 0 auto;
+  font-size: 0.65em;
+  color: rgba(255,255,255,0.35);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 400px) {
+  .thcp-calc-card { padding: 22px 16px; }
+  .thcp-calc-btn { padding: 9px 14px; font-size: 0.88em; min-width: 56px; }
+  .thcp-calc-result-number { font-size: 2.3em; }
+}
+</style>
+</head>
+<body>
+
+<div class="thcp-calc">
+  <div class="thcp-calc-card">
+    <p class="thcp-calc-title">THCP Amount Translator</p>
+    <p class="thcp-calc-subtitle">Select your familiar Delta-9 THC amount per gummy</p>
+
+    <p class="thcp-calc-label">Delta-9 THC per gummy</p>
+    <div class="thcp-calc-options" id="thcpOptions"></div>
+
+    <div id="thcpPrompt" class="thcp-calc-prompt">
+      <p>Pick an amount above to see the THCP equivalent</p>
+    </div>
+
+    <div id="thcpResult" class="thcp-calc-result">
+      <div class="thcp-calc-result-number" id="thcpNumber"></div>
+      <div class="thcp-calc-result-unit">THCP equivalent</div>
+      <div class="thcp-calc-bar-wrap">
+        <div class="thcp-calc-bar" id="thcpBar"></div>
+      </div>
+      <div class="thcp-calc-bar-labels">
+        <span>Mild</span><span>Strong</span><span>Intense</span>
+      </div>
+      <p class="thcp-calc-result-note" id="thcpNote"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  var amounts = [
+    { mg: 5, thcp: 0.15, note: "A light starting point. Around one-eighth of most THCP gummies on the market.", pct: 8 },
+    { mg: 10, thcp: 0.3, note: "The standard conversion. About a quarter of a typical THCP gummy.", pct: 18 },
+    { mg: 15, thcp: 0.45, note: "Still a conservative THCP amount. Expect a noticeably stronger experience.", pct: 28 },
+    { mg: 25, thcp: 0.75, note: "Solidly into noticeable territory. Most experienced users find this range familiar but amplified.", pct: 48 },
+    { mg: 50, thcp: 1.5, note: "This translates to a strong THCP experience. Extended effects of 8 to 12+ hours are common at this level.", pct: 82 },
+    { mg: 100, thcp: 3.0, note: "Intense territory. Time distortion and effects lasting well beyond 12 hours become likely.", pct: 100 }
+  ];
+
+  var container = document.getElementById("thcpOptions");
+  var resultEl = document.getElementById("thcpResult");
+  var promptEl = document.getElementById("thcpPrompt");
+  var numberEl = document.getElementById("thcpNumber");
+  var noteEl = document.getElementById("thcpNote");
+  var barEl = document.getElementById("thcpBar");
+  var buttons = [];
+
+  amounts.forEach(function(item, idx) {
+    var btn = document.createElement("button");
+    btn.className = "thcp-calc-btn";
+    btn.textContent = item.mg + "mg";
+    btn.setAttribute("aria-label", item.mg + " milligrams Delta-9 THC");
+    btn.addEventListener("click", function() {
+      buttons.forEach(function(b) { b.className = "thcp-calc-btn"; });
+      btn.className = "thcp-calc-btn active";
+      promptEl.style.display = "none";
+      resultEl.classList.remove("visible");
+      setTimeout(function() {
+        var display = item.thcp < 1 ? item.thcp.toFixed(2) + "mg" : item.thcp.toFixed(1) + "mg";
+        numberEl.textContent = display;
+        noteEl.textContent = item.note;
+        barEl.style.width = item.pct + "%";
+        resultEl.classList.add("visible");
+      }, 50);
+    });
+    container.appendChild(btn);
+    buttons.push(btn);
+  });
+})();
+</script>
+
+</body>
+</html>
